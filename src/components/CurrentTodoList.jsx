@@ -2,6 +2,7 @@ import { DeleteOutlineRounded, Send } from '@mui/icons-material';
 import * as Icons from '@mui/icons-material';
 import {
   Box,
+  Button,
   Checkbox,
   Divider,
   IconButton,
@@ -106,6 +107,16 @@ export function CurrentTodoList() {
                   void updateList(data.id, event.target.value);
                 }}
               />
+              <Box ml={1}>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={deleteAllItems}
+                  startIcon={<DeleteOutlineRounded />}
+                >
+                  Delete All
+                </Button>
+              </Box>
             </Box>
             <Divider />
             <List
@@ -207,7 +218,7 @@ export function CurrentTodoList() {
                     }}
                   />
                 </Box>
-              </ListItem>{' '}
+              </ListItem>
             </List>
           </>
         ) : (
