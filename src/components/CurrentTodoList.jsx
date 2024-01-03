@@ -11,6 +11,8 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Tab,
+  Tabs,
   TextField,
   Toolbar,
   Typography,
@@ -29,6 +31,7 @@ export function CurrentTodoList() {
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
+  const [selectedTab, setSelectedTab] = useState('all');
 
   useEffect(() => {
     if (data?.name) {
@@ -46,10 +49,36 @@ export function CurrentTodoList() {
 
   const Icon = Icons[data?.icon];
 
+  const filteredItems = data?.items.filter(item => {
+    if (selectedTab === 'active') {
+      return !item.checked;
+    } else if (selectedTab === 'complete') {
+      return item.checked;
+    } else {
+      return true; // 'all' tab or any other case
+    }
+  });
+  const deleteAllItems = () => {
+    data.items.forEach(({ id }) => {
+      deleteItem(id);
+    });
+  };
+
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Toolbar />
       <Box sx={{ flex: 1 }}>
+        <Tabs
+          value={selectedTab}
+          onChange={(e, newValue) => setSelectedTab(newValue)}
+          variant="fullWidth"
+          aria-label="todo-list-tabs"
+        >
+          <Tab label="All" value="all" />
+          <Tab label="Active" value="active" />
+          <Tab label="Complete" value="complete" />
+        </Tabs>
+        <Box sx={{ mb: 2 }} />
         {data ? (
           <>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -87,7 +116,7 @@ export function CurrentTodoList() {
                 mt: 2,
               }}
             >
-              {data.items.map(({ id, checked }) => {
+              {filteredItems.map(({ id, checked }) => {
                 const labelId = `checkbox-list-label-${id}`;
 
                 return (
@@ -166,7 +195,8 @@ export function CurrentTodoList() {
                           <IconButton
                             aria-label="submit"
                             onClick={() => {
-                              document.activeElement.blur();
+                              void newItem(newItemText);
+                              setNewItemText('');
                             }}
                             edge="end"
                           >
@@ -177,7 +207,7 @@ export function CurrentTodoList() {
                     }}
                   />
                 </Box>
-              </ListItem>
+              </ListItem>{' '}
             </List>
           </>
         ) : (
